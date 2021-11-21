@@ -1,15 +1,12 @@
 import * as yup from 'yup'
-import { keyBy } from 'lodash'
 
-export const validateRssForm = (fields) => {
+export const validateRssForm = (fields, activeUrls) => {
     const rssFormSchema = yup.object().shape({
-        url: yup.string().url(),
+        url: yup
+            .string()
+            .url('rssForm.errors.url')
+            .notOneOf(activeUrls, 'rssForm.errors.url_duplicate'),
     })
 
-    return rssFormSchema
-        .validate(fields, { abortEarly: false })
-        .catch((err) => {
-            const errors = keyBy(err.inner, 'path')
-            return Promise.reject(errors)
-        })
+    return rssFormSchema.validate(fields)
 }

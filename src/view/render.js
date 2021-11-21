@@ -28,7 +28,7 @@ export const render = (state, listeners) => {
 
             default:
                 if (path.includes('rssForm.fields')) {
-                    const name = path.split('.').slice(-1)[0]
+                    const [name] = path.split('.').slice(-1)
                     rssForm.setValue(name, value)
                 }
                 break

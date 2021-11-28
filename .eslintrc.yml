@@ -20,3 +20,5 @@ rules:
   no-console: 0
   arrow-body-style: 0
   import/extensions: 0
+  func-names: 0
+  no-param-reassign: 0

@@ -22,6 +22,8 @@ export default function app() {
             posts: [],
             channels: [],
             urls: [],
+            modalData: null,
+            viewedPostIds: [],
         },
     }
 
@@ -66,6 +68,13 @@ export default function app() {
                         rssForm.errors = errors
                         rssForm.valid = false
                     })
+            },
+        },
+        feed: {
+            onPostViewClick: (postId) => {
+                const { feed } = state
+                feed.modalData = find(feed.posts, { id: postId })
+                feed.viewedPostIds.push(postId)
             },
         },
     })

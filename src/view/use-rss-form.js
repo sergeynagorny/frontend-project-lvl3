@@ -2,7 +2,7 @@ import { FormProcess } from '../const'
 import I18n from '../libs/i18n'
 
 const createFeedback = (message, type) => {
-    return `<p class="small text-${type}">${message}</p>`
+    return message ? `<p class="small text-${type}">${message}</p>` : ''
 }
 
 const useRssForm = (listeners) => {

@@ -1,7 +1,10 @@
+import { find } from 'lodash'
 import init from './init'
 import { FormProcess } from './const'
-import { validateRssForm } from './utils'
 import { render } from './view/render'
+import { validateRssForm } from './utils/validate'
+import { getRss } from './api/rss'
+import { updateRss, updateRssFeedRegularly } from './utils/update-rss'
 
 export default function app() {
     const initState = {
@@ -16,6 +19,8 @@ export default function app() {
             },
         },
         feed: {
+            posts: [],
+            channels: [],
             urls: [],
         },
     }
@@ -24,12 +29,28 @@ export default function app() {
         rssForm: {
             onSubmit: (evt) => {
                 evt.preventDefault()
+                const { rssForm, feed } = state
+                const { url } = rssForm.fields
 
-                const { feed, rssForm } = state
                 rssForm.processState = FormProcess.SENDING
-                feed.urls.push(rssForm.fields.url)
-                rssForm.fields.url = ''
-                rssForm.processState = FormProcess.FILLING
+                rssForm.processError = null
+                rssForm.processSuccess = null
+
+                getRss(url)
+                    .then((response) => {
+                        updateRss(state, response)
+                    })
+                    .then(() => {
+                        feed.urls.push(url)
+                        rssForm.fields.url = ''
+                        rssForm.processSuccess = 'RSS успешно загружен'
+                    })
+                    .catch((error) => {
+                        rssForm.processError = error.message
+                    })
+                    .finally(() => {
+                        rssForm.processState = FormProcess.FILLING
+                    })
             },
             onChange: (evt) => {
                 const { feed, rssForm } = state
@@ -48,8 +69,8 @@ export default function app() {
             },
         },
     })
+
+    updateRssFeedRegularly(state)
 }
 
-init().then(() => {
-    app()
-})
+init().then(app)

@@ -73,6 +73,4 @@ export default function app() {
     updateRssFeedRegularly(state)
 }
 
-init().then(() => {
-    app()
-})
+init().then(app)
